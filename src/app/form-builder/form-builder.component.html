@@ -1,0 +1,126 @@
+<div class="container mt-2">
+   <h3 class="text-center my-4">Resolute solutions</h3>
+  <div class="row align-items-center mb-4">
+    <div class="col-12 d-flex justify-content-center gap-3">
+      <button class="btn btn-primary btn-sm" (click)="openModal(TextBox)">
+        <i class="bi bi-fonts" style="font-size: 1.5rem;"></i> Add Text Field
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="openModal(TextArea)">
+        <i class="bi bi-file-earmark-text" style="font-size: 1.5rem;"></i> Add Textarea
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="openModal(Date)">
+        <i class="bi bi-calendar" style="font-size: 1.5rem;"></i> Add Date Picker
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="openModal(Radio)">
+        <i class="bi bi-ui-radios" style="font-size: 1.5rem;"></i> Add Radio Buttons
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="openModal(Select)">
+        <i class="bi bi-list" style="font-size: 1.5rem;"></i> Add Select List
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="openModal(Checkbox)">
+        <i class="bi bi-check-square" style="font-size: 1.5rem;"></i> Add Checkboxes
+      </button>
+    </div>
+  </div>
+
+  <div class="row preview-Mode" *ngIf="fields.length > 0">
+    <div class="col-12">
+      <h3>Form Preview</h3>
+      <div *ngFor="let field of fields; let i = index" class="field-preview">
+        <!-- Formly Field Preview -->
+        <formly-form [model]="model" [fields]="[field]" [options]="formOptions"></formly-form>
+        <div class="field-actions d-flex justify-content-end gap-2 mt-2">
+          <button type="button" class="btn btn-warning btn-sm" (click)="editField(i)">Edit</button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Adding Fields -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Field</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="Label" class="form-label">Field Label:</label>
+              <input type="text" placeholder="label name" id="Label" [(ngModel)]="fieldLabel" class="form-control" required #fieldLabelInput="ngModel" />
+  <div *ngIf="(fieldLabelInput.invalid && fieldLabelInput.touched) || (submitted && fieldLabelInput.invalid)" class="text-danger">
+    Field Label is required.
+  </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="type" class="form-label">Field Type:</label>
+              <select [(ngModel)]="fieldType" id="type" readonly class="form-control" (change)="onFieldTypeChange()">
+                <option [value]="TextBox">Text Field</option>
+                <option [value]="TextArea">Textarea</option>
+                <option [value]="Checkbox">Checkboxes</option>
+                <option [value]="Radio">Radio Buttons</option>
+                <option [value]="Date">Date</option>
+                <option [value]="Select">Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="Placeholder" class="form-label">Placeholder:</label>
+              <input type="text" id="Placeholder" placeholder="placeholder" [(ngModel)]="fieldPlaceholder" class="form-control" />
+            </div>
+
+            <div class="col-md-6" *ngIf="!isCheckBoxOrRadio">
+              <label for="min" class="form-label">Min Length:</label>
+              <input type="number" id="min" [(ngModel)]="minLength" class="form-control" [min]="0" />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6" *ngIf="!isCheckBoxOrRadio">
+              <label for="max" class="form-label">Max Length:</label>
+              <input type="number" id="max" [(ngModel)]="maxLength" class="form-control" [max]="500" />
+            </div>
+
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <label for="Required" class="form-label">Required:</label>
+                  <input type="checkbox" id="Required" class="form-check" [(ngModel)]="isRequired" />
+                </div>
+                <div class="col-6">
+                  <label for="readOnly" class="form-label">Readonly:</label>
+                  <input type="checkbox" id="readOnly" class="form-check" [(ngModel)]="isreadOnly" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checkbox or Radio button options -->
+          <div *ngIf="isCheckBoxOrRadio" class="m-2">
+            <label class="form-label">Options:</label>
+            <div *ngIf="options.length > 0 ">
+              <div *ngFor="let option of options; let i = index">
+                <input [(ngModel)]="option.label" placeholder="Label" class="form-control m-2" />
+                <input [(ngModel)]="option.value" placeholder="Value" class="form-control m-2" />
+                <button type="button" class="btn btn-danger btn-sm m-2" (click)="removeOption(i)">Remove Option</button>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm m-2" (click)="addOption()">Add Option</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="addControl(fieldLabelInput)">Add Field</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2 class="text-center">json form Data</h2>
+<p>{{this.fields | json}}</p>
+</div>
+
